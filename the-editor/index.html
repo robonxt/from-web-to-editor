@@ -23,50 +23,65 @@
       <button id="tbMenu" title="Menu"><span>☰</span></button>
     </nav>
     <aside class="sidebar">
-      <h2>Pages</h2>
-      <div class="pages-list" id="pagesList"></div>
-      <div class="page-controls">
-        <input id="newPathInput" type="text" placeholder="Add page or asset path (e.g. index.html)" />
-        <button id="addPathBtn">Add</button>
-      </div>
-      <div class="actions">
-        <button id="loadBtn" class="primary">Load Selected</button>
-        <button id="savePageBtn">Save Page To Buffer</button>
-        <button id="revertBtn">Revert Page</button>
-        <button id="downloadPageBtn">Download Current HTML</button>
-        <hr />
-        <label style="display:flex; align-items:center; gap:6px;">
-          <input type="checkbox" id="includeAssetsCbx" /> Include assets in ZIP
-        </label>
-        <button id="exportZipBtn" class="primary">Export ZIP (edited files)</button>
-        <hr />
-        <div class="page-controls">
-          <input id="newPageName" type="text" placeholder="new-page.html" />
-          <button id="createPageBtn">Create Page</button>
+      <details open class="panel">
+        <summary>Pages</summary>
+        <div class="panel-body">
+          <div class="pages-list" id="pagesList"></div>
+          <div class="page-controls">
+            <input id="newPathInput" type="text" placeholder="Add page or asset path (e.g. index.html)" />
+            <button id="addPathBtn" class="secondary">Add</button>
+          </div>
         </div>
-      </div>
-      <div class="buffer">
-        <h3>Edited Files</h3>
-        <ul id="bufferList"></ul>
-      </div>
+      </details>
 
-      <div class="components">
-        <h2>Components</h2>
-        <div id="componentsList" class="list"></div>
-        <div class="page-controls">
-          <input id="newComponentPath" type="text" placeholder="e.g. components/icon.html" />
-          <button id="addComponentBtn">Add</button>
+      <details open class="panel">
+        <summary>Site Actions</summary>
+        <div class="panel-body actions">
+          <button id="loadBtn" class="primary">Load Selected</button>
+          <button id="savePageBtn" class="secondary">Save Page To Buffer</button>
+          <button id="revertBtn" class="secondary">Revert Page</button>
+          <button id="downloadPageBtn" class="secondary">Download Current HTML</button>
+          <div class="inline">
+            <label class="checkbox">
+              <input type="checkbox" id="includeAssetsCbx" /> Include assets in ZIP
+            </label>
+            <button id="exportZipBtn" class="primary">Export ZIP (edited files)</button>
+          </div>
+          <div class="page-controls">
+            <input id="newPageName" type="text" placeholder="new-page.html" />
+            <button id="createPageBtn" class="secondary">Create Page</button>
+          </div>
         </div>
-        <button id="insertComponentBtn">Insert Selected Component</button>
-      </div>
+      </details>
 
-      <div class="assets">
-        <h2>Assets</h2>
-        <div class="page-controls">
-          <input id="assetPathInput" type="text" placeholder="public/bg.gif or full URL" />
-          <button id="applyAssetToImgBtn">Set on <img></button>
+      <details open class="panel">
+        <summary>Edited Files</summary>
+        <div class="panel-body buffer">
+          <ul id="bufferList"></ul>
         </div>
-      </div>
+      </details>
+
+      <details class="panel">
+        <summary>Components</summary>
+        <div class="panel-body components">
+          <div id="componentsList" class="list"></div>
+          <div class="page-controls">
+            <input id="newComponentPath" type="text" placeholder="e.g. components/icon.html" />
+            <button id="addComponentBtn" class="secondary">Add</button>
+          </div>
+          <button id="insertComponentBtn" class="secondary">Insert Selected Component</button>
+        </div>
+      </details>
+
+      <details class="panel">
+        <summary>Assets</summary>
+        <div class="panel-body assets">
+          <div class="page-controls">
+            <input id="assetPathInput" type="text" placeholder="public/bg.gif or full URL" />
+            <button id="applyAssetToImgBtn" class="secondary">Set on &lt;img&gt;</button>
+          </div>
+        </div>
+      </details>
     </aside>
 
     <main class="main">
@@ -99,12 +114,15 @@
           <iframe id="editorFrame" sandbox="allow-same-origin allow-scripts allow-forms" title="Editor"></iframe>
         </div>
         <section class="inspector">
-          <h3>Inspector</h3>
-          <div id="breadcrumbs" class="breadcrumbs"></div>
-          <div id="selectedSummary">No element selected</div>
-          <div class="inspector-fields" id="inspectorFields"></div>
-          <div class="inspector-actions">
+          <div class="inspector-header">
+            <h3>Inspector</h3>
+            <div id="breadcrumbs" class="breadcrumbs"></div>
+            <div id="selectedSummary" class="selected">No element selected</div>
+          </div>
+
+          <div class="inspector-section">
             <div class="insertion">
+              <label class="insertion-label" for="insertTagSelect">Insert</label>
               <select id="insertTagSelect">
                 <option value="p">p</option>
                 <option value="h1">h1</option>
@@ -117,11 +135,19 @@
                 <option value="li">li</option>
               </select>
               <button id="insertTagBtn" class="primary">Insert</button>
-              <button id="wrapWithBtn">Wrap with <div></button>
-              <button id="moveUpBtn">Move Up</button>
-              <button id="moveDownBtn">Move Down</button>
-              <button id="duplicateBtn">Duplicate</button>
+              <div class="divider"></div>
+              <button id="wrapWithBtn" class="secondary">Wrap with &lt;div&gt;</button>
+              <button id="moveUpBtn" class="secondary">Move Up</button>
+              <button id="moveDownBtn" class="secondary">Move Down</button>
+              <button id="duplicateBtn" class="secondary">Duplicate</button>
             </div>
+          </div>
+
+          <div class="scroll">
+            <div class="inspector-fields" id="inspectorFields"></div>
+          </div>
+
+          <div class="inspector-actions">
             <button id="applyAttrsBtn" class="primary">Apply Changes</button>
             <button id="deleteElBtn" class="danger">Delete Element</button>
           </div>

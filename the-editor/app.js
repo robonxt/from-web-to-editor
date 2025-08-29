@@ -367,8 +367,28 @@
     addField('id', 'id', el.id);
     addField('class', 'class', el.getAttribute('class') || '');
 
-    if (el.hasAttribute('href')) addField('href', 'href', el.getAttribute('href'));
+    // Common attributes
+    if (el.hasAttribute('href') || tag === 'a') addField('href', 'href', el.getAttribute('href') || '');
     if (el.hasAttribute('src')) addField('src', 'src', el.getAttribute('src'));
+    addField('title', 'title', el.getAttribute('title') || '');
+    if (el.hasAttribute('alt') || tag === 'img') addField('alt', 'alt', el.getAttribute('alt') || '');
+    if (tag === 'a') {
+      addField('target', 'target', el.getAttribute('target') || '');
+      addField('rel', 'rel', el.getAttribute('rel') || '');
+      if (el.hasAttribute('download')) addField('download', 'download', el.getAttribute('download') || '');
+    }
+    if (tag === 'img') {
+      addField('width', 'width', el.getAttribute('width') || '');
+      addField('height', 'height', el.getAttribute('height') || '');
+    }
+    if (tag === 'input' || tag === 'textarea') {
+      addField('name', 'name', el.getAttribute('name') || '');
+      if (tag === 'input') addField('value', 'value', el.getAttribute('value') || '');
+      addField('placeholder', 'placeholder', el.getAttribute('placeholder') || '');
+    }
+    // ARIA / role
+    addField('aria-label', 'aria-label', el.getAttribute('aria-label') || '');
+    addField('role', 'role', el.getAttribute('role') || '');
 
     addField('style (inline)', 'style', el.getAttribute('style') || '');
 
@@ -434,6 +454,18 @@
         case 'href':
         case 'src':
         case 'style':
+        case 'title':
+        case 'alt':
+        case 'target':
+        case 'rel':
+        case 'download':
+        case 'width':
+        case 'height':
+        case 'name':
+        case 'value':
+        case 'placeholder':
+        case 'aria-label':
+        case 'role':
           if (val) selectedEl.setAttribute(key, val); else selectedEl.removeAttribute(key);
           break;
         case '__text':

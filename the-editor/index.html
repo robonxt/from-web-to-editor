@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website WYSIWYG Editor</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- External libs for export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-DtXjH2j7uJ6M2aG0FqetBWKAtcSeJ4Xc8W4z7EU9sSeU2UByb7Wg2qNwVte9gWl1HhI4L3+q7g7FQK8iC3mJXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-5x3mG3xW7zUQ7m8+VYl3+e3qG4O7n9eWQh3Gm1vQ5Y6CwzU7dG5m8S3l5T2C0qQ0b2S5qX8G0f3fP8Z3k1jvVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <div id="app">
+    <nav class="ltb" id="leftToolbar" aria-label="Toolbar">
+      <button id="tbAdd" title="Add"><span>＋</span></button>
+      <button id="tbUndo" title="Undo"><span>↶</span></button>
+      <button id="tbRedo" title="Redo"><span>↷</span></button>
+      <hr />
+      <button id="tbPreview" title="Preview"><span>▶</span></button>
+      <button id="tbSwitch" title="Switch View"><span>📱</span></button>
+      <hr />
+      <button id="tbPublish" title="Publish"><span>⤓</span></button>
+      <button id="tbMenu" title="Menu"><span>☰</span></button>
+    </nav>
+    <aside class="sidebar">
+      <h2>Pages</h2>
+      <div class="pages-list" id="pagesList"></div>
+      <div class="page-controls">
+        <input id="newPathInput" type="text" placeholder="Add page or asset path (e.g. index.html)" />
+        <button id="addPathBtn">Add</button>
+      </div>
+      <div class="actions">
+        <button id="loadBtn" class="primary">Load Selected</button>
+        <button id="savePageBtn">Save Page To Buffer</button>
+        <button id="revertBtn">Revert Page</button>
+        <button id="downloadPageBtn">Download Current HTML</button>
+        <hr />
+        <label style="display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="includeAssetsCbx" /> Include assets in ZIP
+        </label>
+        <button id="exportZipBtn" class="primary">Export ZIP (edited files)</button>
+        <hr />
+        <div class="page-controls">
+          <input id="newPageName" type="text" placeholder="new-page.html" />
+          <button id="createPageBtn">Create Page</button>
+        </div>
+      </div>
+      <div class="buffer">
+        <h3>Edited Files</h3>
+        <ul id="bufferList"></ul>
+      </div>
+
+      <div class="components">
+        <h2>Components</h2>
+        <div id="componentsList" class="list"></div>
+        <div class="page-controls">
+          <input id="newComponentPath" type="text" placeholder="e.g. components/icon.html" />
+          <button id="addComponentBtn">Add</button>
+        </div>
+        <button id="insertComponentBtn">Insert Selected Component</button>
+      </div>
+
+      <div class="assets">
+        <h2>Assets</h2>
+        <div class="page-controls">
+          <input id="assetPathInput" type="text" placeholder="public/bg.gif or full URL" />
+          <button id="applyAssetToImgBtn">Set on <img></button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <span>Current: <strong id="currentPath"></strong></span>
+        <label><input type="checkbox" id="toggleEditable" checked /> Editable</label>
+        <button id="selectModeBtn">Select Element</button>
+        <div class="divider"></div>
+        <div class="responsive">
+          <label for="viewportPreset">Viewport:</label>
+          <select id="viewportPreset">
+            <option value="full">Full</option>
+            <option value="1440">Desktop 1440</option>
+            <option value="1024">Laptop 1024</option>
+            <option value="768">Tablet 768</option>
+            <option value="390">Mobile 390</option>
+          </select>
+          <input id="viewportWidth" type="number" min="320" step="10" placeholder="px" />
+          <button id="applyViewportBtn">Apply</button>
+        </div>
+        <div class="divider"></div>
+        <button id="undoBtn">Undo</button>
+        <button id="redoBtn">Redo</button>
+        <div class="divider"></div>
+        <button id="editHeadBtn">Edit <head></button>
+        <span id="status"></span>
+      </div>
+      <div class="editor-pane">
+        <div class="frame-wrap">
+          <iframe id="editorFrame" sandbox="allow-same-origin allow-scripts allow-forms" title="Editor"></iframe>
+        </div>
+        <section class="inspector">
+          <h3>Inspector</h3>
+          <div id="breadcrumbs" class="breadcrumbs"></div>
+          <div id="selectedSummary">No element selected</div>
+          <div class="inspector-fields" id="inspectorFields"></div>
+          <div class="inspector-actions">
+            <div class="insertion">
+              <select id="insertTagSelect">
+                <option value="p">p</option>
+                <option value="h1">h1</option>
+                <option value="h2">h2</option>
+                <option value="div">div</option>
+                <option value="a">a</option>
+                <option value="img">img</option>
+                <option value="section">section</option>
+                <option value="ul">ul</option>
+                <option value="li">li</option>
+              </select>
+              <button id="insertTagBtn" class="primary">Insert</button>
+              <button id="wrapWithBtn">Wrap with <div></button>
+              <button id="moveUpBtn">Move Up</button>
+              <button id="moveDownBtn">Move Down</button>
+              <button id="duplicateBtn">Duplicate</button>
+            </div>
+            <button id="applyAttrsBtn" class="primary">Apply Changes</button>
+            <button id="deleteElBtn" class="danger">Delete Element</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Help / Instructions Modal -->
+  <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Useful Instructions</h3>
+        <button id="helpClose" title="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <ul class="help-list">
+          <li><strong>Add</strong>: Add elements (text, images, etc.).</li>
+          <li><strong>Undo</strong>: Undo previous action.</li>
+          <li><strong>Redo</strong>: Redo next action.</li>
+          <li><strong>Preview</strong>: Preview page without editor overlays.</li>
+          <li><strong>Switch View</strong>: Toggle mobile/desktop viewport.</li>
+          <li><strong>Publish</strong>: Export site as ZIP (Shift+Click for quick export with assets).</li>
+          <li><strong>Menu</strong>: Show this help panel.</li>
+          <li><strong>Tips</strong>: Drag and drop (Move Up/Down), click element to edit properties.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
